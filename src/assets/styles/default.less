@@ -1,0 +1,50 @@
+/* 默认样式配置 */
+
+* {
+	-webkit-overflow-scrolling: touch; /* 允许独立滚动区域，解决IOS上的非body元素滚动条滚动时卡顿 */
+	-webkit-tap-highlight-color: transparent; /* 覆盖IOS上用户点击连接时的默认高亮颜色 */
+	outline: none;
+}
+body {
+	// min-width: 1200px;
+	margin: 0;
+	padding: 0;
+}
+ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* 美化滚动条 */
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+	background-color: transparent;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+	border-radius: 2px;
+	background-color: rgba(60, 127, 244, 0.6);
+	-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+	border-radius: 0;
+	background: rgba(69, 74, 100, 0.15);
+}
+::-webkit-resizer {
+	background: rgba(69, 74, 100, 0.15);
+}
+::-webkit-scrollbar-button {
+	background: rgba(69, 74, 100, 0.15);
+	width: 0;
+	height: 0;
+}
+::-webkit-scrollbar-corner {
+	background: rgba(69, 74, 100, 0.15);
+	width: 0;
+	height: 0;
+}

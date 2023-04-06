@@ -1,0 +1,67 @@
+{
+    "GPT-4": [
+      {
+        "context": "8K",
+        "prompt": 0.03,
+        "completion": 0.06
+      },
+      {
+        "context": "32K",
+        "prompt": 0.06,
+        "completion": 0.12
+      }
+    ],
+    "ChatGPT": [
+      {
+        "model": "gpt-3.5-turbo",
+        "usage": 0.002
+      }
+    ],
+    "InstructGPT": [
+      {
+        "model": "Ada",
+        "price": 0.0004
+      },
+      {
+        "model": "Babbage",
+        "price": 0.0005
+      },
+      {
+        "model": "Curie",
+        "price": 0.002
+      },
+      {
+        "model": "Davinci",
+        "price": 0.02
+      }
+    ],
+    "FineTuning": [
+      {
+        "model": "Ada",
+        "training": 0.0004,
+        "usage": 0.0016
+      },
+      {
+        "model": "Babbage",
+        "training": 0.0006,
+        "usage": 0.0024
+      },
+      {
+        "model": "Curie",
+        "training": 0.003,
+        "usage": 0.012
+      },
+      {
+        "model": "Davinci",
+        "training": 0.03,
+        "usage": 0.12
+      }
+    ],
+    "Embedding": [
+      {
+        "model": "Ada",
+        "price": 0.0004
+      }
+    ]
+  }
+  
