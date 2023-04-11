@@ -1,4 +1,3 @@
-import { lazy } from 'react'
 // ==================
 // 组件
 // ==================
@@ -6,7 +5,6 @@ import LoadingPage from "@/components/LoadingPage";
 import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom"
 import routers from './routerList';
-
 export interface Router {
   name?: string,
   path: string,

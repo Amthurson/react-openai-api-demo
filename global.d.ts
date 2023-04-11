@@ -86,6 +86,9 @@ type ListData = {
 declare global {
     interface Window {
 		[prop: `__${string}`]: any;
+		delegate: any
+		requestAnimFrame: any;
+		particleAnimation: any;
     }
 }
 export {}

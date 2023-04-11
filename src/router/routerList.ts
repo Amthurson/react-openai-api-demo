@@ -1,10 +1,17 @@
 import { lazy } from 'react'
+import NotFound from '@/pages/ErrorPages/404cool'
 
 // 路由表
 export default [
     {
-        path: '/404',
-        component: lazy(() => import('@/pages/ErrorPages/404'))
+        path: '/*',
+        component: lazy(() => import('@/layout')),
+        children: [
+            {
+                path:"*",
+                component: NotFound
+            }
+        ]
     },
     {
         path: '/nopower',
@@ -25,7 +32,7 @@ export default [
             {
                 path: '/app/embeddings',
                 component: lazy(() => import('@/pages/app/embeddings'))
-            }
+            },
         ]
     },
     {
