@@ -4,7 +4,5 @@ import "@/assets/styles/default.less";
 import "@/assets/styles/global.less";
 import RouterCom from './router'
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
     <RouterCom />
-  </React.StrictMode>
 )

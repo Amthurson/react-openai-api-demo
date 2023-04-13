@@ -11,7 +11,7 @@ export default ()=> {
     },[])
     return <div className={style.wrap}>
         <canvas ref={canvasRef} id="notfound-aniamtion-container"></canvas>
-        <div onClick={()=>window.location.replace('/')} className="back">
+        <div onClick={()=>window.location.replace('/app/chat')} className="back">
             Back To Home
         </div>
     </div>

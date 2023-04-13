@@ -1,18 +1,8 @@
 import { lazy } from 'react'
-import NotFound from '@/pages/ErrorPages/404cool'
+import NotFound from '@/pages/ErrorPages/404cool/404cool'
 
 // 路由表
 export default [
-    {
-        path: '/*',
-        component: lazy(() => import('@/layout')),
-        children: [
-            {
-                path:"*",
-                component: NotFound
-            }
-        ]
-    },
     {
         path: '/nopower',
         component: lazy(() => import('@/pages/ErrorPages/401'))
@@ -44,5 +34,15 @@ export default [
                 component: lazy(() => import('@/pages/settings/models/list'))
             }
         ]
-    }
+    },
+    {
+        path: '/*',
+        component: lazy(() => import('@/layout')),
+        children: [
+            {
+                path:"*",
+                component: NotFound
+            }
+        ]
+    },
 ]

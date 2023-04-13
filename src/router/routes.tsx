@@ -3,25 +3,27 @@
 // ==================
 import LoadingPage from "@/components/LoadingPage";
 import { Suspense } from "react";
-import { Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes } from "react-router-dom"
 import routers from './routerList';
 export interface Router {
   name?: string,
   path: string,
   children?: Array<Router>,
-  component: any
+  component?: any,
+  redirect?: string
 }
 
 const RouterComs = ():JSX.Element => {
     // 递归生成Route组件树
     const RouteComs = (routers: Array<Router>):JSX.Element => {
         return <>
-            {routers.map((item, i) => (
-                <Route 
+            {routers.map((item, i) => {
+                return <Route 
                     key={i} 
                     path={item.path}
                     element={
-                        <Suspense fallback={
+                        item.redirect? <Navigate to={item.redirect} replace={true} /> :
+                        item.component && <Suspense fallback={
                             <LoadingPage/>
                         }>
                             < item.component />
@@ -29,7 +31,7 @@ const RouterComs = ():JSX.Element => {
                     }
                     {...item.children && item.children.length>0 && {children:RouteComs(item.children)}}
                 />
-            ))}
+            })}
         </>
     }
 
