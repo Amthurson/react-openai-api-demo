@@ -68,10 +68,10 @@ const Embeddings: FC<Props> = (props: Props): JSX.Element => {
     const handleCreateEmbeddings = useCallback(async () => {
         // console.log(text)
         if(!text && text==="") return;
-        // const res = await setEmbeddings(text);
+        const res = await setEmbeddings(text);
         embeddingDatas.push({
             text,
-            embeddings: embeddingDatas[0].embeddings
+            embeddings: res
         });
         setEmbeddingDatas(embeddingDatas);
         setResult(JSON.stringify(embeddingDatas));
