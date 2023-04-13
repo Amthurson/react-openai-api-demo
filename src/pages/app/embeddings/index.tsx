@@ -11,7 +11,7 @@ type Props = {
     model: string
 }
 
-import EmbeddingsDataTemplate from './embeddingDatas.json';
+import EmbeddingsMemoryData from './embeddingDatas.json';
 import { Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 
@@ -45,8 +45,8 @@ const Embeddings: FC<Props> = (props: Props): JSX.Element => {
     }
     const [text,setText] = useState("");
     const [question,setQuestion] = useState("");
-    const [embeddingDatas,setEmbeddingDatas] = useState<EmbeddingsDataType[]>(EmbeddingsDataTemplate);
-    const [result,setResult] = useState<string>(JSON.stringify(EmbeddingsDataTemplate));
+    const [embeddingDatas,setEmbeddingDatas] = useState<EmbeddingsDataType[]>(EmbeddingsMemoryData);
+    const [result,setResult] = useState<string>(JSON.stringify(EmbeddingsMemoryData));
     const [mostSimilarData,setMostSimilarData] = useState<EmbeddingsDataType | null>(null);
     const [answer,setAnswer] = useState("");
     const [similarity,setSimilarity] = useState(0);
@@ -68,13 +68,25 @@ const Embeddings: FC<Props> = (props: Props): JSX.Element => {
     const handleCreateEmbeddings = useCallback(async () => {
         // console.log(text)
         if(!text && text==="") return;
-        const res = await setEmbeddings(text);
+        // const res = await setEmbeddings(text);
         embeddingDatas.push({
             text,
-            embeddings: res
+            embeddings: embeddingDatas[0].embeddings
         });
         setEmbeddingDatas(embeddingDatas);
         setResult(JSON.stringify(embeddingDatas));
+        setData(embeddingDatas.map((v,i)=>({
+            id: ""+(i+1),
+            key: `embeddingData-${i}`,
+            text: v.text,
+            model: v.embeddings.model,
+            prompt_tokens: v.embeddings.usage.prompt_tokens,
+            total_tokens: v.embeddings.usage.total_tokens,
+            similarity: v.similarity || '--',
+            embedding: `[${v.embeddings.data[0].embedding.slice(0,4).map(v=>Math.round(v*10000)/10000).join(',')}...](${v.embeddings.data[0].embedding.length})`,
+            loading: false,
+            cost: Math.round(v.embeddings.usage.total_tokens*price.Embedding[0].price/1000*exchangeRate*10000000)/10000000
+        })))
     },[text])
 
     const handleAsk = useCallback(async () => {
@@ -82,7 +94,10 @@ const Embeddings: FC<Props> = (props: Props): JSX.Element => {
         const queEmbeddings = await setEmbeddings(question);
         const { data } = queEmbeddings;
         const { embedding } = data[0];
-        const newEmbeddingDatas = embeddingDatas.map(v=>({...v,similarity: cosineSimilarity(v.embeddings.data[0].embedding,embedding)}));
+        const newEmbeddingDatas = embeddingDatas.map(v=>({
+            ...v,
+            similarity: cosineSimilarity(v.embeddings.data[0].embedding,embedding)
+        }));
         const similarities = newEmbeddingDatas.map(v=>v.similarity);
         setEmbeddingDatas(newEmbeddingDatas);
         const mostSimilarIndex = similarities.indexOf(Math.max(...similarities));
@@ -131,7 +146,7 @@ const Embeddings: FC<Props> = (props: Props): JSX.Element => {
           sorter: (a, b) => +a.similarity - +b.similarity
         },
         {
-          title: '模型',
+          title: '使用的模型',
           dataIndex: 'model',
           key: 'model',
         },

@@ -5,8 +5,6 @@ import { message } from "antd";
 import { clearNull } from "@/utils/tools";
 import qs from "qs";
 
-const OPENAI_API_KEY = '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';
-
 type Result<T> = T;
 
 // 自定义RequestConfig扩展AxiosRequestConfig
@@ -80,7 +78,7 @@ instance.interceptors.request.use(
 		/**
 		 * 业务部分
 		 */
-		config.headers!.Authorization = `Bearer ${OPENAI_API_KEY}`;
+		config.headers!.Authorization = `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`;
 		// const accessToken = localStorage.getItem("accessToken");
 		// if (accessToken) {
 		// 	const { tokenType, tokenValue } = JSON.parse(accessToken);
@@ -243,11 +241,11 @@ const http = {
 	},
 };
 
-export const remoteList = async (url: string, params: Record<string, any>): Promise<ListData> => {
-	const { data } = await http.post<ListData>(url, params)
-	if (!data?.list) return { total: 0, list: Array.isArray(data) ? data : [], pageSize: 10, pageNum: 1 }
-	return data
-}
+// export const remoteList = async (url: string, params: Record<string, any>): Promise<ListData> => {
+// 	const { data } = await http.post<ListData>(url, params)
+// 	if (!data?.list) return { total: 0, list: Array.isArray(data) ? data : [], pageSize: 10, pageNum: 1 }
+// 	return data
+// }
 
 export const remoteData = async <T>(url: string, params: Record<string, any>): Promise<T> => {
 	const MethodAbbr = { p: 'post', g: 'get', d: 'delete' }

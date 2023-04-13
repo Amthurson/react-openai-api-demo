@@ -91,4 +91,5 @@ declare global {
 		particleAnimation: any;
     }
 }
+
 export {}

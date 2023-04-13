@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 
 // 配置 OpenAI API 密钥
-const apiKey = "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";
+const apiKey = process.env.VITE_OPENAI_API_KEY;
 
 // 读取 PDF 文件并转换为文本
 async function pdfToText(fileBuffer) {
