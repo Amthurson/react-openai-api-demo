@@ -99,6 +99,17 @@ const menus = [
             },
         ]
     },
+    {
+        key:'/chatglm',
+        icon: <VideoCameraOutlined />,
+        label: 'ChatGLM-6B-Local',
+        children: [
+            {
+                key: '/chatglm/chat',
+                label: 'chat'
+            },
+        ]
+    }
 ]
 
 const Screen = (props: Props):JSX.Element => {

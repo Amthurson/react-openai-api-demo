@@ -1,6 +1,6 @@
 import { FC, useRef, useState } from "react";
 import { History } from "history";
-import { createChatCompletion } from "@/apis/openai";
+import { chatGLMchat } from "@/apis/chatGLM";
 import styles from "./index.module.css";
 
 type Props = {
@@ -9,31 +9,26 @@ type Props = {
     model: string
 }
 
+// gpt参数
 const settings = {
+    max_length:2048,
+    top_p:0.7,
+    temperature:0.95
+}
+
+// 对话角色设定
+const roleSettings = {
     questionerName: "John", // 提问者名称
-    sampleQuestion: "Are you happy?", // 问题示例
-    chatGPTRoleName: "ChatGPT", // ChatGPT回答角色名称
-    sampleAnswer: "Not realy, but still fine with me?", // 回答示例
+    chatGPTRoleName: "ChatGLM", // ChatGPT回答角色名称
 }
 
 const Chat: FC<Props> = (props: Props): JSX.Element => {
-    const model = props.model || 'text-davinci-003';
     const [prompt, setPrompt] = useState("");
     const [question,setQuestion] = useState("");
+    const [history,setHistory] = useState<string[][]>([]);
     const [completions,setCompletions] = useState<any[]>([]); // 问答数组
     const [loading,setLoading] = useState(false); // 是否加载答案
     const dialogRef = useRef(null);
-
-    // 设置前置的回答格式示例prompt，用于请求在（对话者名称等）
-    const getPromptForm = () => {
-        const { 
-            questionerName,
-            sampleQuestion,
-            chatGPTRoleName,
-            sampleAnswer 
-        } = settings;
-        return `${questionerName?`${questionerName}: `:""}${sampleQuestion?sampleQuestion+'\n\n':''}${chatGPTRoleName?`${chatGPTRoleName}: `:""}${sampleAnswer?sampleAnswer+'\n\n':''}`
-    }
 
     // 滚动到底部
     const scrollBottom = () => {
@@ -43,22 +38,21 @@ const Chat: FC<Props> = (props: Props): JSX.Element => {
     }
 
     // 提问
-    const onSubmit2 = async () => {
+    const onSubmit = async () => {
         try {
             setLoading(true);
-            // 获取个性化配置（提问者，回答者名称等）
-            const { questionerName } = settings;
             // 问题为空，返回
             if(!question) return;
             // 创建一个问答
-            completions.push({question:`${questionerName?`${questionerName}: `:""}${question}`,answer:[]});
+            completions.push({question:`${question}`,answer:[]});
             setCompletions(completions);
             // 循环请求OpenAI所有回答
-            const requestPrompt = getPromptForm() + prompt + `${questionerName?`${questionerName}: `:""}` + question;
+            const requestPrompt = question;
             // 清空输入框
             setQuestion("");
             scrollBottom();
             const res = await makeRequest(requestPrompt);
+            if(!res) return;
             // 组成新的Prompt
             const newPrompt = setCompletionsToPrompt(res);
             // 重置Prompt给下一次提问准备
@@ -76,11 +70,11 @@ const Chat: FC<Props> = (props: Props): JSX.Element => {
         if(!completions) return "";
         let newPromot = "";
         completions.map(v=>{
-        newPromot += v.question;
-        v.answer.map((v2: string)=>{
-            newPromot += v2
-        });
-        newPromot += '\n\n';
+            newPromot += v.question;
+            v.answer.map((v2: string)=>{
+                newPromot += v2
+            });
+            newPromot += '\n\n';
         });
         return newPromot;
     }
@@ -97,23 +91,21 @@ const Chat: FC<Props> = (props: Props): JSX.Element => {
         try {
             console.log(newPrompt);
             const params = {
-                model,
-                prompt: newPrompt
+                prompt: newPrompt,
+                histroy: completions.map(v=>([v.question,combindAnsers(v.answer)])),
+                ...settings
             }
             // openai API
-            const data = await createChatCompletion(params)
-            const { text, finish_reason } = data.choices[0];
-            completions[completions.length-1].answer.push(text);
+            const data = await chatGLMchat(params)
+            const { response,history,time } = data;
+            completions[completions.length-1].answer.push(response);
+            setHistory(history);
             setCompletions(completions);
-            if(finish_reason !== 'stop') {
-                return await makeRequest(newPrompt+text);
-            } else {
-                setLoading(false);
-                return completions;
-            }
+            setLoading(false);
+            return completions;
         } catch (error) {
-        console.log(error);
-        return false;
+            console.log(error);
+            return false;
         }
     }
 
@@ -123,31 +115,34 @@ const Chat: FC<Props> = (props: Props): JSX.Element => {
           
     const onkeyup = (e) => {
         if(e.keyCode === 13) {
-            onSubmit2()
+            onSubmit()
         }
     }
 
     return (
         <div>
             <main className={styles.main}>
-                <h3>OpenAI GPT 对话</h3>
+                <h3>ChatGLM 对话</h3>
                 <div className={styles.dialog}>
                 <div className={styles.dialogWrap}>
                     {
                         completions && completions.length>0 && completions.map((v: any,i)=>(
                             <div className={styles.completions} key={`completion-${i}`}>
                             <div className={styles.questions}>
-                                <div className={styles.headimg}>{settings.questionerName?settings.questionerName[0].toUpperCase():''}</div>
+                                <div className={styles.headimg}>{roleSettings.questionerName?roleSettings.questionerName[0].toUpperCase():''}</div>
                                 <div className={styles.contentWrap}>
-                                <div className={styles.userName}>{settings.questionerName}</div>
-                                <div className={styles.content}>{v.question.split(': ')[1]}</div>
+                                <div className={styles.userName}>{roleSettings.questionerName}</div>
+                                <div className={styles.content}>{v.question}</div>
                                 </div>
                             </div>
                             <div className={styles.answers}>
-                                <div className={styles.headimg}>{settings.chatGPTRoleName?settings.chatGPTRoleName[0].toUpperCase():''}</div>
+                                <div className={styles.headimg}>{roleSettings.chatGPTRoleName?roleSettings.chatGPTRoleName[0].toUpperCase():''}</div>
                                 <div className={styles.contentWrap}>
-                                <div className={styles.userName}>{settings.chatGPTRoleName}</div>
-                                <div className={styles.content}>{loading && i===completions.length-1?"...":combindAnsers(v.answer)}</div>
+                                <div className={styles.userName}>{roleSettings.chatGPTRoleName}</div>
+                                <div className={styles.content}>
+                                    <pre>{loading && i===completions.length-1?"...":combindAnsers(v.answer)}
+                                    </pre>
+                                </div>
                                 </div>
                             </div>
                             </div>
@@ -156,7 +151,7 @@ const Chat: FC<Props> = (props: Props): JSX.Element => {
                 </div>
                     <div className={styles.inputWrap}>
                         <input disabled={loading} onInput={handleInput} className={loading ? styles.question+" "+styles.loading : styles.question} type="input" value={question}/>
-                        <input disabled={loading} onClick={onSubmit2} onKeyUp={onkeyup} className={loading ? styles.button+" "+styles.loading : styles.button} value="提问" type="button"/>
+                        <input disabled={loading} onClick={onSubmit} onKeyUp={onkeyup} className={loading ? styles.button+" "+styles.loading : styles.button} value="提问" type="button"/>
                     </div>
                 </div>
             </main>

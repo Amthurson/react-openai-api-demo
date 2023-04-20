@@ -26,6 +26,16 @@ export default [
         ]
     },
     {
+        path:'/chatglm',
+        component: lazy(() => import('@/layout')),
+        children: [
+            {
+                path: '/chatglm/chat',
+                component: lazy(() => import('@/pages/chatglm/chat'))
+            },
+        ]
+    },
+    {
         path: '/settings',
         component: lazy(() => import('@/layout')),
         children: [

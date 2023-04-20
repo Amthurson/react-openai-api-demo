@@ -46,11 +46,16 @@ export default defineConfig({
 		// 不默认打开浏览器
 		open: false,
 		proxy: {
-		  '/v1/': {
-			target: 'https://api.openai.com',
-			changeOrigin: true,
-			rewrite: (path) => path.replace(/^\v1/, '')
-		  },
+			'/chatglmApi': {
+				target: 'http://10.52.48.4:8000',
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\chatglmApi/, '')
+			},
+			'/v1/': {
+				target: 'https://api.openai.com',
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\v1/, '')
+			},
 		}
 	},
 })

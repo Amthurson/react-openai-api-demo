@@ -1,5 +1,10 @@
 import axios from "@/utils/axios";
 import { CompletionType, ImageType } from "./openaiTypes";
+
+const headers = {
+    Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
+}
+
 /**
  * Get Models List
  * **/
@@ -25,7 +30,9 @@ export const createChatCompletion = async(params: {
     logit_bias?: Record<string,any> | null; // Defaults to 0
     user?: string;
 }): Promise<CompletionType> => {
-    const res  = await axios.post("/v1/completions",params);
+    const res  = await axios.post("/v1/completions",params,{
+        headers
+    });
     return res;
 }
 
@@ -39,7 +46,9 @@ export const createChatCompletion = async(params: {
     response_format?: string; // "url" /  "b64_json" Defaults to url
     user?: string;
 }): Promise<ImageType> => {
-    const res  = await axios.post("/v1/images/generations",params);
+    const res  = await axios.post("/v1/images/generations",params,{
+        headers
+    });
     return res;
 }
 
@@ -65,6 +74,8 @@ export interface EmbeddingsResultType {
     input: string | string[]; // 0 - 2  1 by default
     user?: string; 
 }): Promise<EmbeddingsResultType> => {
-    const res  = await axios.post("/v1/embeddings",params);
+    const res  = await axios.post("/v1/embeddings",params,{
+        headers
+    });
     return res;
 }
