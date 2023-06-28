@@ -111,7 +111,7 @@
 .main .dialog .text {
   /* transition: all 0.2s ease-in-out; */
   width: 80vw;
-  max-width: 80vw;
+  max-width: 100vw;
   min-width: 200px;
   height: 50vh;
   min-height: 600px;
@@ -138,9 +138,9 @@
   justify-content: flex-start;
   align-items: center; 
   width: 80vw;
-  max-width: 500px;
+  max-width: 80vw;
   min-width: 200px;
-  height: 50vh;
+  height: 70vh;
   min-height: 600px;
   border-radius: 10px;
   border-radius: 10px;

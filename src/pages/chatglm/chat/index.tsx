@@ -124,31 +124,31 @@ const Chat: FC<Props> = (props: Props): JSX.Element => {
             <main className={styles.main}>
                 <h3>ChatGLM 对话</h3>
                 <div className={styles.dialog}>
-                <div className={styles.dialogWrap}>
-                    {
-                        completions && completions.length>0 && completions.map((v: any,i)=>(
-                            <div className={styles.completions} key={`completion-${i}`}>
-                            <div className={styles.questions}>
-                                <div className={styles.headimg}>{roleSettings.questionerName?roleSettings.questionerName[0].toUpperCase():''}</div>
-                                <div className={styles.contentWrap}>
-                                <div className={styles.userName}>{roleSettings.questionerName}</div>
-                                <div className={styles.content}>{v.question}</div>
+                    <div className={styles.dialogWrap}>
+                        {
+                            completions && completions.length>0 && completions.map((v: any,i)=>(
+                                <div className={styles.completions} key={`completion-${i}`}>
+                                <div className={styles.questions}>
+                                    <div className={styles.headimg}>{roleSettings.questionerName?roleSettings.questionerName[0].toUpperCase():''}</div>
+                                    <div className={styles.contentWrap}>
+                                    <div className={styles.userName}>{roleSettings.questionerName}</div>
+                                    <div className={styles.content}>{v.question}</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={styles.answers}>
-                                <div className={styles.headimg}>{roleSettings.chatGPTRoleName?roleSettings.chatGPTRoleName[0].toUpperCase():''}</div>
-                                <div className={styles.contentWrap}>
-                                <div className={styles.userName}>{roleSettings.chatGPTRoleName}</div>
-                                <div className={styles.content}>
-                                    <pre>{loading && i===completions.length-1?"...":combindAnsers(v.answer)}
-                                    </pre>
+                                <div className={styles.answers}>
+                                    <div className={styles.headimg}>{roleSettings.chatGPTRoleName?roleSettings.chatGPTRoleName[0].toUpperCase():''}</div>
+                                    <div className={styles.contentWrap}>
+                                    <div className={styles.userName}>{roleSettings.chatGPTRoleName}</div>
+                                    <div className={styles.content}>
+                                        <pre>{loading && i===completions.length-1?"...":combindAnsers(v.answer)}
+                                        </pre>
+                                    </div>
+                                    </div>
                                 </div>
                                 </div>
-                            </div>
-                            </div>
-                        ))
-                    }
-                </div>
+                            ))
+                        }
+                    </div>
                     <div className={styles.inputWrap}>
                         <input disabled={loading} onInput={handleInput} className={loading ? styles.question+" "+styles.loading : styles.question} type="input" value={question}/>
                         <input disabled={loading} onClick={onSubmit} onKeyUp={onkeyup} className={loading ? styles.button+" "+styles.loading : styles.button} value="提问" type="button"/>

@@ -2,7 +2,7 @@
 // ==================
 // 第三方库
 // ==================
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { 
     MenuUnfoldOutlined,
     MenuFoldOutlined
@@ -10,13 +10,9 @@ import {
 import React from 'react';
 import CustomMenu from '../components/menus';
 
-import {
-    UserOutlined,
-    VideoCameraOutlined,
-} from "@ant-design/icons"
 import style from './index.module.less';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { History } from "history";
 
 // ==================
@@ -27,100 +23,25 @@ type Props = {
     navigator: History;
 }
 
-import { Layout, theme } from 'antd'
+import menus from './menus';
+
+import { Breadcrumb, Layout, theme } from 'antd'
+import { BreadcrumbItemType } from 'antd/es/breadcrumb/Breadcrumb';
 const { Sider,Header, Content } = Layout;
 
-const menus = [
-    {
-        key: 'app',
-        icon: <VideoCameraOutlined />,
-        label: 'app',
-        children: [
-            {
-                key: '/app/chat',
-                label: 'chat'
-            },
-            {
-                key: '/app/image',
-                label: 'image'
-            },
-            {
-                key: '/app/embeddings',
-                label: 'embeddings'
-            },
-            {
-                key: 'audio',
-                label: 'audio',
-                children: [
-                    {
-                        key: '/audio/create-transcription',
-                        label: 'create-transcription',
-                    },
-                    {
-                        key: '/audio/create-translation',
-                        label: 'create-translation',
-                    }
-                ]
-            },
-            {
-                key: 'files',
-                label: 'files',
-                children: [
-                    {
-                        key: '/files/list',
-                        label: 'list',
-                    },
-                    {
-                        key: '/files/upload',
-                        label: 'upload',
-                    },
-                    {
-                        key: '/files/retrieve',
-                        label: 'retrieve',
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        key: '/settings',
-        icon: <UserOutlined />,
-        label: 'settings',
-        children: [
-            {
-                key:'/settings/models',
-                label: 'models',
-                children: [
-                    {
-                        key:'/settings/models/list',
-                        label: 'list',
-                    },
-                ]
-            },
-        ]
-    },
-    {
-        key:'/chatglm',
-        icon: <VideoCameraOutlined />,
-        label: 'ChatGLM-6B-Local',
-        children: [
-            {
-                key: '/chatglm/chat',
-                label: 'chat'
-            },
-        ]
-    }
-]
+
 
 const Screen = (props: Props):JSX.Element => {
     const [collapsed, setCollapsed] = useState(false);
     const { location } = props;
     const navigate = useNavigate();
+    const curLocation = useLocation();
 
     const {
       token: { colorBgContainer },
     } = theme.useToken();
 
+    // ================== 选择菜单 ==================
     const onSelect = (info: {
         key: string;
         keyPath: string[];
@@ -132,6 +53,21 @@ const Screen = (props: Props):JSX.Element => {
         const to = keyPath[0];
         navigate(to)
     }
+
+    const breadItem = useMemo((): BreadcrumbItemType[] => {
+        const items = curLocation.pathname.split('/');
+        let key = "/";
+        return items.filter(item=>item).map((item, index) => {
+            key += item + '/';
+            console.log(key)
+            return {
+                key,
+                title: item,
+                onClick: () => navigate(key),
+                className: 'breadcrumb-item'
+            }
+        });
+    },[curLocation])
 
     return (
         <Layout className={style.container}>
@@ -146,7 +82,10 @@ const Screen = (props: Props):JSX.Element => {
                     onClick: () => setCollapsed(!collapsed),
                 })}
                 </Header>
-                <Content>
+                <Content className='content'>
+                    <Breadcrumb style={{ margin: '16px 0' }}
+                        items={breadItem}
+                    />
                     <ErrorBoundary location={location}>
                         <Outlet></Outlet>
 					</ErrorBoundary>
