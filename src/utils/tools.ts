@@ -153,8 +153,8 @@ export const uncompile = (code: string): string => {
  * 清除一个对象中那些属性为空值的属性
  * 0 算有效值
  * **/
-export const clearNull = <T>(obj: T): T => {
-	const temp: T = { ...obj };
+export const clearNull = <T>(obj: T extends object?any:any): T => {
+	const temp = { ...obj };
 	Object.keys(temp).forEach(key => {
 		if (temp[key] !== 0 && temp[key] !== "" && !temp[key]) {
 			delete temp[key];
